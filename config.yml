@@ -1,0 +1,10 @@
+# Configuration file
+server:
+  address: "127.0.0.1"
+  port: 80
+database:
+  address: "192.168.56.101"
+  port: 5432
+  username: "ev_user"
+  password: "asdasd"
+  dbname: "ev"
