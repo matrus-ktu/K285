@@ -1,13 +1,6 @@
-//const personCheckbox = document.getElementById("person");
 const companyCheckbox = document.getElementById("company");
 const companyDetails = document.getElementById("companyDetails");
 
-// personCheckbox.addEventListener("change", function() {
-//   if (personCheckbox.checked) {
-//     companyCheckbox.checked = false;
-//     companyDetails.style.display = "none";
-//   }
-// });
 
 companyCheckbox.addEventListener("change", function() {
   if (companyCheckbox.checked) {
@@ -31,3 +24,17 @@ function validatePassword() {
 
 passwordInput.addEventListener("change", validatePassword);
 repeatPasswordInput.addEventListener("change", validatePassword);
+
+const emailInput = document.getElementById("email");
+const repeatEmailInput = document.getElementById("repeatEmail");
+
+function validateEmail() {
+  if (emailInput.value !== repeatEmailInput.value) {
+    repeatEmailInput.setCustomValidity("Emails must match");
+  } else {
+    repeatEmailInput.setCustomValidity("");
+  }
+}
+
+emailInput.addEventListener("change", validateEmail);
+repeatEmailInput.addEventListener("change", validateEmail);

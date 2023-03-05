@@ -21,14 +21,25 @@
     opacity: 1;
 }
 
-.back-to-top {
-    position: fixed;
-    display: none;
-    right: 45px;
-    bottom: 45px;
-    z-index: 99;
-}
+/*.back-to-top {*/
+/*    position: fixed;*/
+/*    display: none;*/
+/*    right: 45px;*/
+/*    bottom: 45px;*/
+/*    z-index: 99;*/
+/*}*/
 
+
+.back-to-top {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 99;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
 /*** Heading ***/
 h1,
@@ -109,7 +120,7 @@ h6,
 }
 
 .sticky-top.navbar-light .navbar-brand img {
-    max-height: 45px;
+    max-height: 60px;
 }
 
 @media (max-width: 991.98px) {
@@ -154,7 +165,9 @@ h6,
 	}
     
 	.sticky-top.navbar-light .logo {
-		background-image: url("..\img\logo_blue.png");
+        content: url('../img/logo_blue.png');
+        width: 50px;
+        height: 50px;
 	}
 	
     .sticky-top.navbar-light {
