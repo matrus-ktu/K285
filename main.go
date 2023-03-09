@@ -19,7 +19,7 @@ func main() {
 		cfg.Database.DBName)
 
 	// File handling
-	http.Handle("*/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	// Login page
 	http.HandleFunc("/login/", func(w http.ResponseWriter, r *http.Request) {
 		authentication.LoginHandler(w, r, db, cfg)
@@ -28,12 +28,7 @@ func main() {
 	http.HandleFunc("/register/", func(w http.ResponseWriter, r *http.Request) {
 		authentication.RegisterHandler(w, r, db, cfg)
 	})
-	// About page
-	http.HandleFunc("/about/", pages.AboutHandler)
-	// Contact page
-	http.HandleFunc("/contact/", pages.ContactHandler)
-	// Service page
-	http.HandleFunc("/service/", pages.ServiceHandler)
+
 	// Home page
 	http.HandleFunc("/", pages.IndexHandler)
 

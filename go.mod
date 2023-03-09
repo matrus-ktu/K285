@@ -2,7 +2,10 @@ module EVMap
 
 go 1.20
 
-require gopkg.in/yaml.v3 v3.0.1
+require (
+	gopkg.in/yaml.v3 v3.0.1
+	gorm.io/gorm v1.24.6
+)
 
 require (
 	github.com/gorilla/mux v1.8.0 // indirect
@@ -14,5 +17,4 @@ require (
 	golang.org/x/crypto v0.6.0 // indirect
 	golang.org/x/text v0.7.0 // indirect
 	gorm.io/driver/postgres v1.4.8 // indirect
-	gorm.io/gorm v1.24.5 // indirect
 )
