@@ -11,6 +11,8 @@ import (
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"log"
+	"os"
 )
 
 var db *gorm.DB
@@ -22,7 +24,11 @@ func main() {
 	cfg = config.ParseConfig("config.yml")
 	db = database.ConnectDB(cfg.Database.Address, cfg.Database.Port, cfg.Database.Username, cfg.Database.Password,
 		cfg.Database.DBName)
-	db.AutoMigrate(&users.Users{}, &users.Organization{})
+	err := db.AutoMigrate(&users.Users{}, &users.Organization{})
+	if err != nil {
+		log.Printf("Database migration failed: %s", err)
+		os.Exit(-1)
+	}
 
 	// Router configuration
 	router := gin.Default()
@@ -46,5 +52,9 @@ func main() {
 	router.GET("/api/testroute", api.TestAPI)
 
 	fmt.Println("Server is listening on " + cfg.Server.Address + ":" + cfg.Server.Port + "...")
-	router.Run(cfg.Server.Address + ":" + cfg.Server.Port)
+	err = router.Run(cfg.Server.Address + ":" + cfg.Server.Port)
+	if err != nil {
+		log.Printf("Server launch has failed: %s", err)
+		os.Exit(-1)
+	}
 }
