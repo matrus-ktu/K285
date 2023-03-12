@@ -24,11 +24,13 @@ func LoginHandlerPost(c *gin.Context, db *gorm.DB) {
 			"color":   "alert alert-warning",
 			"message": message,
 		})
+		c.Abort()
 	}
 
 	user := users.Users{}
-	db.Where("email = ?", email).First(&user)
-	if user.Email == "" {
+	err := db.Where("email = ?", email).First(&user).Error
+
+	if err != nil {
 		c.HTML(http.StatusUnauthorized, "login.html", gin.H{
 			"type":    "alert alert-danger",
 			"message": "Nurodytas el. pašto adresas neegzistuoja!",
@@ -64,8 +66,8 @@ func RegisterHandlerPost(c *gin.Context, db *gorm.DB) {
 	repeatPassword := c.PostForm("repeatPassword")
 
 	user := users.Users{}
-	db.Where("email = ?", email).First(&user)
-	if user.Email != "" {
+	err := db.Where("email = ?", email).First(&user).Error
+	if err != nil {
 		c.HTML(http.StatusInternalServerError, "register.html", gin.H{
 			"type":    "alert alert-warning",
 			"message": "El. pašto adresas yra užimtas!",
@@ -85,11 +87,18 @@ func RegisterHandlerPost(c *gin.Context, db *gorm.DB) {
 		user.Email = email
 		user.Password = fmt.Sprintf("%x", sha256.Sum256([]byte(password)))
 		user.SessionID = generator.GenerateAlpha(25)
+		if c.PostForm("company") == "company" {
+			org := users.Organization{Name: c.PostForm("companyName"),
+				Code:    c.PostForm("companyCode"),
+				Address: c.PostForm("companyAddress"),
+				Phone:   c.PostForm("companyPhone")}
+			user.Org = org
+		}
 		db.Create(&user)
 		db.Commit()
 		messages.AddMessage(c, "Paskyra sukurta! Galite prisijungti.")
 		c.Redirect(http.StatusMovedPermanently, "/login")
-		c.Next()
+		c.Abort()
 	}
 
 }
