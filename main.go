@@ -1,37 +1,50 @@
 package main
 
 import (
-	"EVMap/authentication"
+	"EVMap/api"
 	"EVMap/config"
+	routes "EVMap/controllers"
 	"EVMap/database"
-	"EVMap/pages"
+	"EVMap/users"
 	"fmt"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"net/http"
 )
 
 var db *gorm.DB
 var cfg config.Config
 
 func main() {
+	// Initialization
+	gin.SetMode(gin.ReleaseMode)
 	cfg = config.ParseConfig("config.yml")
 	db = database.ConnectDB(cfg.Database.Address, cfg.Database.Port, cfg.Database.Username, cfg.Database.Password,
 		cfg.Database.DBName)
+	db.AutoMigrate(&users.Users{}, &users.Organization{})
 
-	// File handling
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-	// Login page
-	http.HandleFunc("/login/", func(w http.ResponseWriter, r *http.Request) {
-		authentication.LoginHandler(w, r, db, cfg)
-	})
-	// Register page
-	http.HandleFunc("/register/", func(w http.ResponseWriter, r *http.Request) {
-		authentication.RegisterHandler(w, r, db, cfg)
-	})
+	// Router configuration
+	router := gin.Default()
+	router.Static("/static", "./static")
+	router.LoadHTMLGlob("templates/*.html")
+	router.Use(sessions.Sessions("session", cookie.NewStore([]byte(cfg.Server.Secret))))
 
-	// Home page
-	http.HandleFunc("/", pages.IndexHandler)
+	// Routes
+	router.GET("/", routes.IndexHandler)
+	router.GET("/login", routes.LoginHandler)
+	router.POST("/login", func(c *gin.Context) {
+		routes.LoginHandlerPost(c, db)
+	})
+	router.GET("/register", routes.RegisterHandler)
+	router.POST("/register", func(c *gin.Context) {
+		routes.RegisterHandlerPost(c, db)
+	})
+	router.NoRoute(routes.NotFound)
+
+	// API Routes
+	router.GET("/api/testroute", api.TestAPI)
 
 	fmt.Println("Server is listening on " + cfg.Server.Address + ":" + cfg.Server.Port + "...")
-	http.ListenAndServe(cfg.Server.Address+":"+cfg.Server.Port, nil)
+	router.Run(cfg.Server.Address + ":" + cfg.Server.Port)
 }

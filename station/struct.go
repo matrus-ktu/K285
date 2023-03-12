@@ -1,18 +1,18 @@
 package station
 
 type Station struct {
-	ID                  int
-	Name                string
-	Address             string
-	Latitude            string
-	Longitude           string
-	Status              string
-	ConType             Connector
-	ParkingRestrictions string
-	Price               Tariff
-	Img                 Image
-	ParkingCost         string
-	Operator            string
+	ID                  int       `json:"id"`
+	Name                string    `json:"name"`
+	Address             string    `json:"address"`
+	Latitude            string    `json:"latitude"`
+	Longitude           string    `json:"longitude"`
+	Status              string    `json:"status"`
+	ConType             Connector `json:"connector"`
+	ParkingRestrictions string    `json:"restrictions"`
+	Price               Tariff    `json:"price"`
+	Img                 Image     `json:"img"`
+	ParkingCost         string    `json:"cost"`
+	Operator            string    `json:"operator"`
 }
 
 type Connector struct {

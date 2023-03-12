@@ -2,6 +2,7 @@
 server:
   address: "127.0.0.1"
   port: 80
+  session_secret: "EwN#QE^$2OoFzCTUb2vt$TPlKl9Ue&&krdfJmW)_0RHx&r+BjN"
 database:
   address: "192.168.56.101"
   port: 5432
