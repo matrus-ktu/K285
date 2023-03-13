@@ -46,6 +46,8 @@ func main() {
 	router.POST("/register", func(c *gin.Context) {
 		routes.RegisterHandlerPost(c, db)
 	})
+	router.GET("/account", routes.AccountHandler)
+	router.GET("/logout", routes.LogoutSession)
 	router.NoRoute(routes.NotFound)
 
 	// API Routes

@@ -14,7 +14,7 @@ func LoginHandler(c *gin.Context) {
 	session := sessions.Default(c)
 	user_session := session.Get("user")
 	if user_session != nil {
-		c.Redirect(http.StatusMovedPermanently, "/")
+		c.Redirect(http.StatusMovedPermanently, "/account")
 	} else {
 		c.HTML(http.StatusOK, "login.html", nil)
 	}
@@ -26,4 +26,9 @@ func RegisterHandler(c *gin.Context) {
 
 func NotFound(c *gin.Context) {
 	c.HTML(http.StatusOK, "404.html", nil)
+}
+
+func AccountHandler(c *gin.Context) {
+	AuthRequired(c)
+	c.HTML(http.StatusOK, "under_construction.html", nil)
 }

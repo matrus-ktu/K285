@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"EVMap/generator"
-	"EVMap/messages"
 	"EVMap/users"
 	"crypto/sha256"
 	"fmt"
@@ -15,29 +14,19 @@ import (
 
 func LoginHandlerPost(c *gin.Context, db *gorm.DB) {
 	session := sessions.Default(c)
-	message := messages.GetMessage(c)
 	email := c.PostForm("email")
 	password := fmt.Sprintf("%x", sha256.Sum256([]byte(c.PostForm("password"))))
 
-	if message != nil {
-		c.HTML(http.StatusUnauthorized, "login.html", gin.H{
-			"color":   "alert alert-warning",
-			"message": message,
-		})
-		c.Abort()
-	}
-
 	user := users.Users{}
-	err := db.Where("email = ?", email).First(&user).Error
+	_ = db.Where("email = ?", email).First(&user).Error
 
-	if err != nil {
+	if user.Email == "" {
 		c.HTML(http.StatusUnauthorized, "login.html", gin.H{
 			"type":    "alert alert-danger",
 			"message": "Nurodytas el. pašto adresas neegzistuoja!",
 		})
 		c.Abort()
 	} else if password != user.Password {
-		messages.AddMessage(c, "Slaptažodis neteisingas!")
 		c.HTML(http.StatusUnauthorized, "login.html", gin.H{
 			"type":    "alert alert-danger",
 			"message": "Slaptažodis neteisingas!",
@@ -53,7 +42,7 @@ func LoginHandlerPost(c *gin.Context, db *gorm.DB) {
 				"message": "Prisijungti nepavyko. Susisiekite su administratoriumi!",
 			})
 		}
-		c.Redirect(http.StatusMovedPermanently, "/")
+		c.Redirect(http.StatusMovedPermanently, "/account")
 		c.Abort()
 	}
 }
@@ -66,8 +55,8 @@ func RegisterHandlerPost(c *gin.Context, db *gorm.DB) {
 	repeatPassword := c.PostForm("repeatPassword")
 
 	user := users.Users{}
-	err := db.Where("email = ?", email).First(&user).Error
-	if err != nil {
+	_ = db.Where("email = ?", email).First(&user).Error
+	if user.Email == "" {
 		c.HTML(http.StatusInternalServerError, "register.html", gin.H{
 			"type":    "alert alert-warning",
 			"message": "El. pašto adresas yra užimtas!",
@@ -96,7 +85,6 @@ func RegisterHandlerPost(c *gin.Context, db *gorm.DB) {
 		}
 		db.Create(&user)
 		db.Commit()
-		messages.AddMessage(c, "Paskyra sukurta! Galite prisijungti.")
 		c.Redirect(http.StatusMovedPermanently, "/login")
 		c.Abort()
 	}
