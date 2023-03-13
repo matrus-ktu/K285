@@ -56,7 +56,7 @@ func RegisterHandlerPost(c *gin.Context, db *gorm.DB) {
 
 	user := users.Users{}
 	_ = db.Where("email = ?", email).First(&user).Error
-	if user.Email == "" {
+	if user.Email != "" {
 		c.HTML(http.StatusInternalServerError, "register.html", gin.H{
 			"type":    "alert alert-warning",
 			"message": "El. pašto adresas yra užimtas!",
