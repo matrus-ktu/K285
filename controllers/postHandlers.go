@@ -18,7 +18,7 @@ func LoginHandlerPost(c *gin.Context, db *gorm.DB) {
 	password := fmt.Sprintf("%x", sha256.Sum256([]byte(c.PostForm("password"))))
 
 	user := users.Users{}
-	_ = db.Where("email = ?", email).First(&user).Error
+	db.Where("email = ?", email).First(&user)
 
 	if user.Email == "" {
 		c.HTML(http.StatusUnauthorized, "login.html", gin.H{
@@ -55,7 +55,7 @@ func RegisterHandlerPost(c *gin.Context, db *gorm.DB) {
 	repeatPassword := c.PostForm("repeatPassword")
 
 	user := users.Users{}
-	_ = db.Where("email = ?", email).First(&user).Error
+	db.Where("email = ?", email).First(&user)
 	if user.Email != "" {
 		c.HTML(http.StatusInternalServerError, "register.html", gin.H{
 			"type":    "alert alert-warning",
